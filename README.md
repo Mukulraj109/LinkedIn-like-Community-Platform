@@ -120,8 +120,8 @@ mini-linkedin/
 
 2. **Backend Setup**
    ```bash
-  cd server
-  npm install 
+   cd server
+   npm install 
    ```
 
 3. **Create environment variables**
