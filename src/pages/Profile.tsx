@@ -4,7 +4,14 @@ import { User, Post } from '../types';
 import { userAPI, postsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
-import { User as UserIcon, Calendar, Mail, Edit2, Save, X } from 'lucide-react';
+import {
+  User as UserIcon,
+  Calendar,
+  Mail,
+  Edit2,
+  Save,
+  X
+} from 'lucide-react';
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -29,7 +36,7 @@ const Profile: React.FC = () => {
       try {
         setLoading(true);
         setError('');
-        
+
         const userData = await userAPI.getProfile(userId);
         setUser(userData);
         setEditForm({
@@ -107,7 +114,7 @@ const Profile: React.FC = () => {
   const handleEditPost = async (postId: string, newContent: string) => {
     try {
       const updatedPost = await postsAPI.updatePost(postId, newContent);
-      setUserPosts(userPosts.map(post => 
+      setUserPosts(userPosts.map(post =>
         post._id === postId ? updatedPost : post
       ));
     } catch (error) {
@@ -127,15 +134,15 @@ const Profile: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (error || !user) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+      <div className="max-w-2xl mx-auto mt-10">
+        <div className="bg-red-100 text-red-700 border border-red-200 p-4 rounded">
           {error || 'User not found'}
         </div>
       </div>
@@ -143,105 +150,74 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Profile Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow border mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex items-start gap-4">
+            <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
               <UserIcon className="w-10 h-10 text-blue-600" />
             </div>
-            <div className="flex-1">
+            <div>
               {isEditing ? (
-                <form onSubmit={handleEditSubmit} className="space-y-3">
+                <form onSubmit={handleEditSubmit} className="space-y-2">
                   <input
                     type="text"
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                    className="text-2xl font-bold text-gray-900 bg-transparent border-b-2 border-blue-300 focus:border-blue-500 outline-none"
+                    className="text-xl font-semibold border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 w-full"
                     required
                   />
                   <textarea
                     value={editForm.bio}
                     onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                    placeholder="Tell us about yourself..."
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    placeholder="Your bio..."
+                    className="w-full border border-gray-300 p-2 rounded resize-none"
                     rows={3}
                   />
-                  <div className="flex items-center space-x-2">
-                    <button
-                      type="submit"
-                      className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      <Save className="w-4 h-4" />
-                      <span>Save</span>
+                  <div className="flex gap-2">
+                    <button type="submit" className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm flex items-center gap-1">
+                      <Save className="w-4 h-4" /> Save
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleCancelEdit}
-                      className="flex items-center space-x-1 px-3 py-1 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                      <span>Cancel</span>
+                    <button onClick={handleCancelEdit} type="button" className="bg-gray-300 text-gray-800 px-4 py-1 rounded hover:bg-gray-400 text-sm flex items-center gap-1">
+                      <X className="w-4 h-4" /> Cancel
                     </button>
                   </div>
                 </form>
               ) : (
                 <>
-                  <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
-                  <div className="flex items-center space-x-4 text-sm text-gray-600 mt-2">
-                    <div className="flex items-center space-x-1">
-                      <Mail className="w-4 h-4" />
-                      <span>{user.email}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>Joined {formatDate(user.createdAt)}</span>
-                    </div>
+                  <h1 className="text-xl font-semibold">{user.name}</h1>
+                  <div className="text-sm text-gray-600 flex flex-wrap gap-4 mt-2">
+                    <span className="flex items-center gap-1"><Mail size={16} /> {user.email}</span>
+                    <span className="flex items-center gap-1"><Calendar size={16} /> Joined {formatDate(user.createdAt)}</span>
                   </div>
-                  {user.bio && (
-                    <p className="text-gray-700 mt-3 leading-relaxed">{user.bio}</p>
-                  )}
+                  {user.bio && <p className="text-gray-700 mt-2 text-sm">{user.bio}</p>}
                 </>
               )}
             </div>
           </div>
-          
           {isOwnProfile && !isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded"
             >
-              <Edit2 className="w-4 h-4" />
-              <span>Edit Profile</span>
+              <Edit2 className="w-4 h-4" /> Edit Profile
             </button>
           )}
         </div>
       </div>
 
       {/* Posts Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h2 className="text-lg font-semibold mb-4">
           {isOwnProfile ? 'Your Posts' : `${user.name}'s Posts`}
         </h2>
-        
         {postsLoading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : userPosts.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <UserIcon className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No posts yet</h3>
-            <p className="text-gray-600">
-              {isOwnProfile 
-                ? "You haven't shared anything yet. Create your first post!" 
-                : `${user.name} hasn't shared anything yet.`
-              }
-            </p>
-          </div>
+          <div className="text-center text-gray-500">No posts available.</div>
         ) : (
           <div className="space-y-4">
             {userPosts.map((post) => (

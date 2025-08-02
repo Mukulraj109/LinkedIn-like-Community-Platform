@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, LogOut, Home, UserCircle } from 'lucide-react';
+import { User, LogOut, Home, UserCircle, Menu } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,6 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -33,13 +34,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <span className="text-xl font-bold text-gray-900">MiniLinkedIn</span>
             </Link>
 
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-4">
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="sm:hidden p-2 text-gray-600 hover:text-blue-600 focus:outline-none"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+
+            {/* Navigation Links (Desktop) */}
+            <div className="hidden sm:flex items-center space-x-4">
               <Link
                 to="/"
                 className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/') 
-                    ? 'text-blue-600 bg-blue-50' 
+                  isActive('/')
+                    ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-gray-100'
                 }`}
               >
@@ -51,8 +60,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Link
                   to={`/profile/${user._id}`}
                   className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(`/profile/${user._id}`) 
-                      ? 'text-blue-600 bg-blue-50' 
+                    isActive(`/profile/${user._id}`)
+                      ? 'text-blue-600 bg-blue-50'
                       : 'text-gray-700 hover:text-blue-600 hover:bg-gray-100'
                   }`}
                 >
@@ -61,9 +70,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Link>
               )}
 
-              {/* User Menu */}
+              {/* User Info & Logout */}
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 hidden md:inline">
                   Welcome, {user?.name}
                 </span>
                 <button
@@ -76,11 +85,53 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
           </div>
+
+          {/* Mobile Dropdown Menu */}
+          {menuOpen && (
+            <div className="sm:hidden mt-2 space-y-1">
+              <Link
+                to="/"
+                className={`block px-3 py-2 rounded-md text-sm font-medium ${
+                  isActive('/')
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-100'
+                }`}
+              >
+                Feed
+              </Link>
+
+              {user && (
+                <Link
+                  to={`/profile/${user._id}`}
+                  className={`block px-3 py-2 rounded-md text-sm font-medium ${
+                    isActive(`/profile/${user._id}`)
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Profile
+                </Link>
+              )}
+
+              <div className="border-t pt-2 px-3">
+                <span className="block text-sm text-gray-600 mb-1">
+                  Welcome, {user?.name}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
     </div>

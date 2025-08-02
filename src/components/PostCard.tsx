@@ -11,11 +11,11 @@ interface PostCardProps {
   showActions?: boolean;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ 
-  post, 
-  onDelete, 
-  onEdit, 
-  showActions = true 
+const PostCard: React.FC<PostCardProps> = ({
+  post,
+  onDelete,
+  onEdit,
+  showActions = true,
 }) => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -39,7 +39,7 @@ const PostCard: React.FC<PostCardProps> = ({
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     if (diffInHours < 48) return 'Yesterday';
@@ -47,24 +47,24 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
       {/* Post Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-y-3 mb-3">
+        <div className="flex items-start gap-3">
           <Link
             to={`/profile/${post.author._id}`}
             className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors"
           >
             <User className="w-5 h-5 text-blue-600" />
           </Link>
-          <div>
+          <div className="flex flex-col">
             <Link
               to={`/profile/${post.author._id}`}
-              className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+              className="font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate"
             >
               {post.author.name}
             </Link>
-            <div className="flex items-center space-x-1 text-sm text-gray-500">
+            <div className="flex items-center gap-1 text-sm text-gray-500">
               <Calendar className="w-3 h-3" />
               <span>{formatDate(post.createdAt)}</span>
             </div>
@@ -73,7 +73,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
         {/* Actions */}
         {showActions && isOwner && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setIsEditing(true)}
               className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
@@ -102,7 +102,7 @@ const PostCard: React.FC<PostCardProps> = ({
             rows={4}
             placeholder="What's on your mind?"
           />
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end gap-2">
             <button
               onClick={handleCancelEdit}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
@@ -119,7 +119,7 @@ const PostCard: React.FC<PostCardProps> = ({
           </div>
         </div>
       ) : (
-        <div className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+        <div className="text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
           {post.content}
         </div>
       )}
